@@ -5,10 +5,9 @@
 
 The deepseek_v41_flash.py deployment with DSpark on the experimental TPU spec
 worker. The draft's MoE shards over the target's EP8 group (~1.6 GB/device).
-Measured on one tpu7x-8: GSM8K 1319 at c128 0.970 (target-only 0.973), accept
-length 3.8 on GSM8K but ~1.05 on random-ids prompts, where it runs at a third
-of target-only output throughput at c64 and c128. Use it for predictable text,
-not for random or high-concurrency throughput workloads.
+Measured on one tpu7x-8 (1024 in / 1024 out random-ids): c64 1777 tok/s and
+c128 2389 tok/s at accept length 4.3-4.4, vs target-only with the same prefill
+delayer 1242 / 2024 tok/s; GSM8K 1319 at c128 0.967 (target-only 0.973).
 """
 
 from copy import deepcopy
@@ -25,6 +24,10 @@ CONFIG["server_args"].update(
         # At 0.85 the larger KV pool leaves the 2048-token extend program
         # ~280 MB short of HBM at load; 0.83 loads every graph.
         "mem_fraction_static": 0.83,
+        # Under attention DP every rank runs a peer's prefill step, so lone
+        # 1024-token prefills stall all 8 ranks' spec decode; batching them
+        # takes c64 from 1004 to 1900 tok/s.
+        "enable_prefill_delayer": True,
     }
 )
 CONFIG["runtime_env"].update({"SGLANG_TPU_ENABLE_EXPERIMENTAL_SPEC_WORKER": "1"})
