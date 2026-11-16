@@ -1,5 +1,27 @@
 # GLM5.2 epic benchmark evidence
 
+## Current status — 2026-11-16 (supersedes historical gates below)
+
+This draft is a work-breakdown snapshot, **not intended to merge**. The full
+chronological experiment archive remains here for traceability; old NOT VALIDATED,
+next-action, dump and admission proposals below are historical, not current instructions.
+
+- Functional anchor: `exp-k0nnadpb6q`, both hosts SUCCEEDED, actual model-authored
+  nonthinking chat template, 20/20 checks, all sixteen native DP receipts verified.
+- Native long anchor: `exp-r188nvdf96`, SUCCEEDED; sixteen cold 12288-input/16-output
+  routed requests completed in 19.3465 host seconds. Six full 2048-token chunks per
+  DP verified; not the matched JAX 49152-prefix/C32/12-round workload.
+- Three hot-cache repeats are internally deterministic but differ from cold greedy
+  output on the repeated-token synthetic prompt: numerical consistency unresolved.
+- Use `torch_staged_loading_candidate.json` with `compiled-long-e2e`; no dump,
+  observer, or custom admission required. Eager diagnostics did not pass.
+- `nodump_acceptance_checkpoint.json` is the current acceptance ledger;
+  `chat_text_e2e_terminal.json`, `native_long_terminal.json`, and
+  `native_long_cadence.json` preserve raw results and accounting.
+- Hardware evidence belongs to the original pinned commits. Rebase onto main does
+  not establish new hardware validation of the rebased head.
+
+
 These files are experimental scaffolding, not a declaration of model/topology support.
 Do not use the candidate JSON as a known-good performance baseline until the gates below pass.
 No Flash recipe is imported or modified.
